@@ -10,5 +10,6 @@ def main(global_config, **settings):
     config.add_route('home', '/')
     config.add_route('post', '/post')
     config.add_route('search', '/search')
+    config.add_route('search_raw', '/search_raw')
     config.scan()
     return config.make_wsgi_app()
