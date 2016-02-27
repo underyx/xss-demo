@@ -3,24 +3,30 @@ Small example to show the problem of multiple threads accessing one global
 variable
 """
 
-from threading import Thread
+from threading import (
+    Thread,
+    Lock,
+    )
 import time
 import random
 
 
 a = 0
+a_lock = Lock()
 
 def increaser():
     global a
-    olda = a
-    time.sleep(random.randint(0, 5))
-    a = olda + 1
+    with a_lock:
+        olda = a
+        time.sleep(random.randint(0, 2))
+        a = olda + 1
 
 def decreaser():
     global a
-    olda = a
-    time.sleep(random.randint(0, 5))
-    a = olda - 1
+    with a_lock:
+        olda = a
+        time.sleep(random.randint(0, 2))
+        a = olda - 1
 
 threads = []
 
