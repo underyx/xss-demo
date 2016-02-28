@@ -16,17 +16,15 @@ a_lock = Lock()
 
 def increaser():
     global a
-    with a_lock:
-        olda = a
-        time.sleep(random.randint(0, 2))
-        a = olda + 1
+    olda = a
+    time.sleep(random.randint(0, 2))
+    a = olda + 1
 
 def decreaser():
     global a
-    with a_lock:
-        olda = a
-        time.sleep(random.randint(0, 2))
-        a = olda - 1
+    olda = a
+    time.sleep(random.randint(0, 2))
+    a = olda - 1
 
 threads = []
 
