@@ -1,5 +1,9 @@
 from threading import RLock
 from copy import deepcopy
+from datetime import (
+    datetime,
+    timezone,
+    )
 
 
 class _DB():
@@ -53,7 +57,7 @@ DB = _DB()
 
 
 def now():
-    return 123
+    return datetime.now(timezone.utc)
 
 
 class Post():
