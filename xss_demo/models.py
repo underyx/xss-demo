@@ -19,7 +19,7 @@ class _DB():
         klass = type(obj)
         with lock:
             data = deepcopy(obj.serialize())
-            if obj.id:
+            if obj.id is not None:
                 # Make sure entry exists
                 self.get(klass, obj.id)
                 db[klass.__table__][obj.id] = data
