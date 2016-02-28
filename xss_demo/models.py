@@ -42,6 +42,20 @@ class _DB():
             obj.id = obj_id
         return obj
 
+    def get_all(self, klass):
+        lock = _DB._db_lock
+        db = _DB._db
+        result = []
+        with lock:
+            for obj_id, data in enumerate(db[klass.__table__]):
+                if not data:
+                    # Skip deleted items
+                    continue
+                obj = klass.deserialize(deepcopy(data))
+                obj.id = obj_id
+                result.append(obj)
+        return result
+
     def delete(self, obj):
         lock = _DB._db_lock
         db = _DB._db

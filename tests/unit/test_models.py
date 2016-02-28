@@ -92,6 +92,21 @@ def test_cant_get_deleted_post():
         DB.get(Post, original_id)
 
 
+def test_get_all_posts():
+    from xss_demo.models import (
+        DB,
+        Post,
+        )
+
+    post = Post('Just some text', 'admin')
+    DB.save(post)
+    saved_id = post.id
+
+    all_posts = DB.get_all(Post)
+    assert len(all_posts) >= 1
+    assert any(post.id == saved_id for post in all_posts)
+
+
 def test_post_creation_empty_list_comment_ids():
     from xss_demo.models import Post
 
@@ -188,3 +203,19 @@ def test_cant_get_deleted_comment():
 
     with pytest.raises(ValueError):
         DB.get(Comment, original_id)
+
+
+def test_get_all_comments():
+    from xss_demo.models import (
+        DB,
+        Comment,
+        )
+
+    comment = Comment('Just some text', 'admin', 0)
+    DB.save(comment)
+    saved_id = comment.id
+
+    all_comments = DB.get_all(Comment)
+    assert len(all_comments) >= 1
+    assert any(comment.id == saved_id for comment in all_comments)
+
