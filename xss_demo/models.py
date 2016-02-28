@@ -80,3 +80,30 @@ class Post():
         date = data['date']
         return cls(content, date=date)
 
+
+class Comment():
+    __table__ = 'comments'
+
+    def __init__(self, message, author, post_id, date=None):
+        self.id = None
+        self.message = message
+        self.author = author
+        self.post_id = post_id
+        self.date = date if date else now()
+
+    def serialize(self):
+        return {
+            'message': self.message,
+            'author': self.author,
+            'post_id': self.post_id,
+            'date': self.date,
+            }
+
+    @classmethod
+    def deserialize(cls, data):
+        message = data['message']
+        author = data['author']
+        post_id = data['post_id']
+        date = data['date']
+        return cls(message, author, post_id, date=date)
+
