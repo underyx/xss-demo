@@ -9,40 +9,43 @@ class _DB():
         }
     _db_lock = RLock()
 
-    def save_post(self, post):
+    def save(self, obj):
         lock = _DB._db_lock
         db = _DB._db
+        klass = type(obj)
         with lock:
-            if post.id:
+            data = deepcopy(obj.serialize())
+            if obj.id:
                 # Make sure entry exists
-                self.get_post(post.id)
-                db['posts'][post.id] = deepcopy(post.serialize())
+                self.get(klass, obj.id)
+                db[klass.__table__][obj.id] = data
             else:
-                db['posts'].append(post.serialize())
-                post.id = len(db['posts']) - 1 
-        return post
+                db[klass.__table__].append(data)
+                obj.id = len(db[klass.__table__]) - 1
+        return obj
 
-    def get_post(self, post_id):
+    def get(self, klass, obj_id):
         lock = _DB._db_lock
         db = _DB._db
         with lock:
             try:
-                data = db['posts'][post_id]
+                data = db[klass.__table__][obj_id]
             except IndexError:
                 data = None
             if not data:
                 raise ValueError('Invalid ID')
-            post = Post.deserialize(deepcopy(data))
-            post.id = post_id
-            return post
+            obj = klass.deserialize(deepcopy(data))
+            obj.id = obj_id
+        return obj
 
     def delete(self, obj):
         lock = _DB._db_lock
         db = _DB._db
+        klass = type(obj)
         with lock:
             # Make sure entry exists
-            self.get_post(obj.id)
-            db['posts'][obj.id] = None
+            self.get(klass, obj.id)
+            db[klass.__table__][obj.id] = None
             obj.id = None
 
 
@@ -54,6 +57,8 @@ def now():
 
 
 class Post():
+    __table__ = 'posts'
+
     def __init__(self, content, date=None):
         self.id = None
         self.content = content
@@ -65,9 +70,9 @@ class Post():
             'date': self.date,
             }
 
-    @staticmethod
-    def deserialize(data):
+    @classmethod
+    def deserialize(cls, data):
         content = data['content']
         date = data['date']
-        return Post(content, date=date)
+        return cls(content, date=date)
 
