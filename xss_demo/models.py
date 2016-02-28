@@ -63,22 +63,28 @@ def now():
 class Post():
     __table__ = 'posts'
 
-    def __init__(self, content, date=None):
+    def __init__(self, content, author, comment_ids=None, date=None):
         self.id = None
         self.content = content
+        self.author = author
+        self.comment_ids = comment_ids if comment_ids else []
         self.date = date if date else now()
 
     def serialize(self):
         return {
             'content': self.content,
+            'author': self.author,
+            'comment_ids': self.comment_ids,
             'date': self.date,
             }
 
     @classmethod
     def deserialize(cls, data):
         content = data['content']
+        author = data['author']
+        comment_ids = data['comment_ids']
         date = data['date']
-        return cls(content, date=date)
+        return cls(content, author, comment_ids=comment_ids, date=date)
 
 
 class Comment():

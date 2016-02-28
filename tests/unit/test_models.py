@@ -7,7 +7,7 @@ def test_save_post_sets_id():
         Post,
         )
 
-    post = Post('Just some text')
+    post = Post('Just some text', 'admin')
     assert post.id is None
     DB.save(post)
     assert post.id is not None
@@ -19,7 +19,7 @@ def test_get_post_returns_same_data():
         Post,
         )
 
-    post = Post('Just some text')
+    post = Post('Just some text', 'admin')
     DB.save(post)
     post2 = DB.get(Post, post.id)
     assert post is not post2  # different objects
@@ -42,7 +42,7 @@ def test_save_existing_post_writes_data():
         Post,
         )
 
-    post = Post('Just some text')
+    post = Post('Just some text', 'admin')
     DB.save(post)
     original_id = post.id
     post.content = 'Modified text'
@@ -57,7 +57,7 @@ def test_save_post_invalid_id():
         Post,
         )
 
-    post = Post('Just some text')
+    post = Post('Just some text', 'admin')
     post.id = 99
     with pytest.raises(ValueError):
         DB.save(post)
@@ -69,7 +69,7 @@ def test_delete_post():
         Post,
         )
 
-    post = Post('Just some text')
+    post = Post('Just some text', 'admin')
     DB.save(post)
     original_id = post.id
     DB.delete(post)
@@ -83,13 +83,20 @@ def test_cant_get_deleted_post():
         Post,
         )
 
-    post = Post('Just some text')
+    post = Post('Just some text', 'admin')
     DB.save(post)
     original_id = post.id
     DB.delete(post)
 
     with pytest.raises(ValueError):
         DB.get(Post, original_id)
+
+
+def test_post_creation_empty_list_comment_ids():
+    from xss_demo.models import Post
+
+    post = Post('Just some text', 'admin')
+    assert post.comment_ids == []
 
 
 def test_save_comment_sets_id():
