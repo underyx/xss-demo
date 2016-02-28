@@ -7,7 +7,7 @@ from .models import (
 
 
 def _init_db():
-    p = Post('My first blogpost', 'Administrator')
+    p = Post('My first blogpost.', 'Administrator')
     DB.save(p)
     c1 = Comment('Great post!', 'Paul E.', post_id=p.id)
     c2 = Comment(
@@ -28,7 +28,7 @@ def main(global_config, **settings):
     config.include('pyramid_chameleon')
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
-    config.add_route('post', '/post')
+    config.add_route('post', '/post/{id}')
     config.add_route('search', '/search')
     config.add_route('search_raw', '/search_raw')
     config.scan()

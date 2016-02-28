@@ -2,15 +2,27 @@ from pyramid.view import view_config
 from pyramid.request import Response
 import html
 
+from .models import (
+    DB,
+    Post,
+    Comment,
+    )
+
 
 @view_config(route_name='home', renderer='templates/home.pt')
 def home(request):
-    return {}
+    posts = DB.get_all(Post)
+    return {'posts': posts}
 
 
 @view_config(route_name='post', renderer='templates/post.pt')
 def post(request):
-    return {}
+    post_id = int(request.matchdict['id'])
+    post = DB.get(Post, post_id)
+    comments = []
+    for cid in post.comment_ids:
+        comments.append(DB.get(Comment, cid))
+    return {'post': post, 'comments': comments}
 
 
 @view_config(route_name='search', renderer='templates/search.pt')
