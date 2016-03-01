@@ -37,6 +37,7 @@ def main(global_config, **settings):
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
     config.add_route('post', '/post/{id}')
+    config.add_route('add_comment', '/post/{id}/add_comment')
     config.add_route('search', '/search')
     config.add_route('search_raw', '/search_raw')
     config.scan()

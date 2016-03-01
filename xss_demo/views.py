@@ -1,5 +1,6 @@
 from pyramid.view import view_config
 from pyramid.request import Response
+import pyramid.httpexceptions as exc
 import html
 
 from .models import (
@@ -23,6 +24,19 @@ def post(request):
     for cid in post.comment_ids:
         comments.append(DB.get(Comment, cid))
     return {'post': post, 'comments': comments}
+
+
+@view_config(route_name='add_comment')
+def add_comment(request):
+    post_id = int(request.matchdict['id'])
+    post = DB.get(Post, post_id)
+    author = request.params['author']
+    message = request.params['message']
+    comment = Comment(message, author, post_id)
+    DB.save(comment)
+    post.comment_ids.append(comment.id)
+    DB.save(post)
+    raise exc.HTTPFound(request.route_url('post', id=post_id))
 
 
 @view_config(route_name='search', renderer='templates/search.pt')
