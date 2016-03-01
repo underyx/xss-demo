@@ -18,7 +18,7 @@
             <hr>
 
             <!-- Date/Time -->
-            <p><span class="glyphicon glyphicon-time"></span> Posted on <span tal:content="post.date">2012-01-01</span></p>
+            <p><span class="glyphicon glyphicon-time"></span><span tal:replace="post.date.strftime(' Posted on %B %d, %Y at %I:%M %p')">2012-01-01</span></p>
 
             <hr>
 
@@ -56,7 +56,7 @@
                 </a>
                 <div class="media-body">
                     <h4 class="media-heading"><span tal:content="comment.author">Max Mustermann</span>
-                        <small tal:content="comment.date">August 25, 2014 at 9:30 PM</small>
+                        <small tal:content="post.date.strftime('%B %d, %Y at %I:%M %p')">2012-01-01</small>
                     </h4>
                     ${comment.message}
                 </div>

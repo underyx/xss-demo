@@ -18,7 +18,7 @@
                 <p class="lead">
                     by <span tal:content="post.author">Max Mustermann</span>
                 </p>
-                <p><span class="glyphicon glyphicon-time"></span> Posted on <span tal:content="post.date">2012-01-01</span></p>
+                <p><span class="glyphicon glyphicon-time"></span><span tal:replace="post.date.strftime(' Posted on %B %d, %Y at %I:%M %p')">2012-01-01</span></p>
                 <hr>
                 <p tal:content="post.content">Lorem ipsum...</p>
                 <a class="btn btn-primary" href="${request.route_url('post', id=post.id)}">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
