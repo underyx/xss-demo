@@ -7,18 +7,26 @@ from .models import (
 
 
 def _init_db():
-    p = Post('First blogpost', 'My first blogpost. [...]', 'Administrator')
-    DB.save(p)
-    c1 = Comment('Great post!', 'Paul E.', post_id=p.id)
+    p1 = Post('First blogpost', 'My first blogpost. [...]', 'Administrator')
+    p2 = Post('Second blogpost', 'Another blogpost. [...]', 'Administrator')
+    p3 = Post('Third blogpost', 'Yet another blogpost. [...]', 'Administrator')
+    DB.save(p1)
+    DB.save(p2)
+    DB.save(p3)
+    c1 = Comment('Great post!', 'Paul E.', post_id=p1.id)
     c2 = Comment(
         'Well written but I disagree with your conclusion.',
         'Max M.',
-        post_id=p.id
+        post_id=p1.id
         )
+    c3 = Comment('Hmm', 'T.T.', post_id=p3.id)
     DB.save(c1)
     DB.save(c2)
-    p.comment_ids = [c1.id, c2.id]
-    DB.save(p)
+    DB.save(c3)
+    p1.comment_ids = [c1.id, c2.id]
+    p3.comment_ids = [c3.id]
+    DB.save(p1)
+    DB.save(p3)
 
 
 def main(global_config, **settings):
