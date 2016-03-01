@@ -13,7 +13,7 @@
             <div tal:repeat="post posts">
                 <!-- First Blog Post -->
                 <h2>
-                    <a href="#">Blog Post Title</a>
+                    <a href="${request.route_url('post', id=post.id)}" tal:content="post.title">Blog Post Title</a>
                 </h2>
                 <p class="lead">
                     by <span tal:content="post.author">Max Mustermann</span>

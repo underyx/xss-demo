@@ -7,7 +7,7 @@ from .models import (
 
 
 def _init_db():
-    p = Post('My first blogpost.', 'Administrator')
+    p = Post('First blogpost', 'My first blogpost. [...]', 'Administrator')
     DB.save(p)
     c1 = Comment('Great post!', 'Paul E.', post_id=p.id)
     c2 = Comment(

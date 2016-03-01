@@ -8,7 +8,7 @@
             <!-- Blog Post -->
 
             <!-- Title -->
-            <h1>Blog Post Title</h1>
+            <h1 tal:content="post.title">Blog Post Title</h1>
 
             <!-- Author -->
             <p class="lead">
