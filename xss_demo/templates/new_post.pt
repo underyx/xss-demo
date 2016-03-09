@@ -2,7 +2,7 @@
   <div metal:fill-slot="content">
     <!-- Comments Form -->
     <div class="well">
-        <h4>Login</h4>
+        <h4>New Blog Post</h4>
         <form role="form" action="${request.route_url('add_post')}" method="POST">
             <div class="form-group">
                 <label for="post-title">Title</label>
