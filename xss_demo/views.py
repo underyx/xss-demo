@@ -39,6 +39,35 @@ def add_comment(request):
     raise exc.HTTPFound(request.route_url('post', id=post_id))
 
 
+@view_config(route_name='new_post', renderer='templates/new_post.pt')
+def new_post(request):
+    return {}
+
+
+@view_config(route_name='add_post')
+def add_post(request):
+    author = 'authenticated userid'
+    title = request.params['title']
+    content = request.params['content']
+    post = Post(title, content, author)
+    DB.save(post)
+    raise exc.HTTPFound(request.route_url('post', id=post.id))
+
+
+@view_config(route_name='login', renderer='templates/login.pt')
+def login(request):
+    return {}
+
+
+@view_config(route_name='authenticate')
+def authenticate(request):
+    username = request.params['username']
+    password = request.params['password']
+    # authenticate
+    # set cookie
+    raise exc.HTTPFound(request.route_url('home'))
+
+
 @view_config(route_name='search', renderer='templates/search.pt')
 def search(request):
     return {'query': request.params.get('q', '')}
