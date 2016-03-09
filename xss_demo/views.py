@@ -1,4 +1,7 @@
-from pyramid.view import view_config
+from pyramid.view import (
+    view_config,
+    forbidden_view_config,
+    )
 from pyramid.request import Response
 import pyramid.httpexceptions as exc
 from pyramid.security import (
@@ -50,12 +53,16 @@ def add_comment(request):
 
 @view_config(route_name='new_post', renderer='templates/new_post.pt')
 def new_post(request):
+    if request.authenticated_userid != 'Administrator':
+        raise exc.HTTPForbidden()
     return {}
 
 
 @view_config(route_name='add_post')
 def add_post(request):
-    author = 'authenticated userid'
+    if request.authenticated_userid != 'Administrator':
+        raise exc.HTTPForbidden()
+    author = request.authenticated_userid
     title = request.params['title']
     content = request.params['content']
     post = Post(title, content, author)
@@ -64,6 +71,7 @@ def add_post(request):
 
 
 @view_config(route_name='login', renderer='templates/login.pt')
+@forbidden_view_config(renderer='templates/login.pt')
 def login(request):
     login_url = request.route_url('login')
     referrer = request.url
@@ -79,7 +87,7 @@ def login(request):
         for user in DB.get_all(User):
             if user.username.lower() == username.lower() and \
                     user.password_correct(password):
-                headers = remember(request, username)
+                headers = remember(request, user.username)
                 raise exc.HTTPFound(location = came_from, headers = headers)
         message = 'Failed login'
 
