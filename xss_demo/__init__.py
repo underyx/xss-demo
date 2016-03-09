@@ -3,10 +3,13 @@ from .models import (
     DB,
     Post,
     Comment,
+    User,
     )
 
 
 def _init_db():
+    user1 = User('Administrator', 'top-secret')
+    DB.save(user1)
     p1 = Post('First blogpost', 'My first blogpost. [...]', 'Administrator')
     p2 = Post('Second blogpost', 'Another blogpost. [...]', 'Administrator')
     p3 = Post('Third blogpost', 'Yet another blogpost. [...]', 'Administrator')
@@ -41,7 +44,6 @@ def main(global_config, **settings):
     config.add_route('search', '/search')
     config.add_route('search_raw', '/search_raw')
     config.add_route('login', '/login')
-    config.add_route('authenticate', '/authenticate')
     config.add_route('new_post', '/new_post')
     config.add_route('add_post', '/add_post')
     config.scan()

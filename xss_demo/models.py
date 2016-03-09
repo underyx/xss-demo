@@ -4,12 +4,14 @@ from datetime import (
     datetime,
     timezone,
     )
+import bcrypt
 
 
 class _DB():
     _db = {
         'posts': [],
         'comments': [],
+        'users': [],
         }
     _db_lock = RLock()
 
@@ -129,4 +131,33 @@ class Comment():
         post_id = data['post_id']
         date = data['date']
         return cls(message, author, post_id, date=date)
+
+
+class User():
+    __table__ = 'users'
+
+    def __init__(self, username, password, hash_it=True):
+        self.id = None
+        self.username = username
+        if hash_it:
+            enc_pwd = password.encode('utf-8')
+            self.password = bcrypt.hashpw(enc_pwd, bcrypt.gensalt())
+        else:
+            self.password = password
+
+    def serialize(self):
+        return {
+            'username': self.username,
+            'password': self.password,
+            }
+
+    @classmethod
+    def deserialize(cls, data):
+        username = data['username']
+        password = data['password']
+        return cls(username, password, hash_it=False)
+
+    def password_correct(self, password):
+        enc_pwd = password.encode('utf-8')
+        return bcrypt.hashpw(enc_pwd, self.password) == self.password
 

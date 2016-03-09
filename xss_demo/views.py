@@ -1,12 +1,17 @@
 from pyramid.view import view_config
 from pyramid.request import Response
 import pyramid.httpexceptions as exc
+from pyramid.security import (
+    remember,
+    forget,
+    )
 import html
 
 from .models import (
     DB,
     Post,
     Comment,
+    User,
     )
 
 
@@ -60,16 +65,29 @@ def add_post(request):
 
 @view_config(route_name='login', renderer='templates/login.pt')
 def login(request):
-    return {}
+    login_url = request.route_url('login')
+    referrer = request.url
+    if referrer == login_url:
+        referrer = '/' # never use the login form itself as came_from
+    came_from = request.params.get('came_from', referrer)
+    message = ''
+    username = ''
+    password = ''
+    if 'form.submitted' in request.params:
+        username = request.params['username']
+        password = request.params['password']
+        for user in DB.get_all(User):
+            if user.username.lower() == username.lower() and \
+                    user.password_correct(password):
+                headers = remember(request, username)
+                raise exc.HTTPFound(location = came_from, headers = headers)
+        message = 'Failed login'
 
-
-@view_config(route_name='authenticate')
-def authenticate(request):
-    username = request.params['username']
-    password = request.params['password']
-    # authenticate
-    # set cookie
-    raise exc.HTTPFound(request.route_url('home'))
+    return dict(
+        message = message,
+        came_from = came_from,
+        username = username,
+        )
 
 
 @view_config(route_name='search', renderer='templates/search.pt')
