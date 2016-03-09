@@ -41,6 +41,7 @@ def main(global_config, **settings):
     config = Configurator(settings=settings)
     secret = os.urandom(32)  # Cookies will become invalid after restart
     authn_policy = AuthTktAuthenticationPolicy(secret)
+    # http_only=True
     authz_policy = ACLAuthorizationPolicy()
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)

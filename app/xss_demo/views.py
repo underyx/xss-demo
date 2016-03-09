@@ -17,6 +17,26 @@ from .models import (
     User,
     )
 
+def _add_csp_header_hard(request):
+    request.response.headers['Content-Security-Policy'] = (
+        "default-src 'none';"
+        "script-src 'self';"
+        "connect-src 'self';"
+        "img-src 'self';"
+        "style-src 'self';"
+        )
+
+
+def _add_csp_header(request):
+    request.response.headers['Content-Security-Policy'] = (
+        "default-src 'none';"
+        "script-src 'self' oss.maxcdn.com 'unsafe-inline';"
+        "connect-src 'self';"
+        "img-src 'self' placehold.it placeholdit.imgix.net;"
+        "style-src 'self' oss.maxcdn.com 'unsafe-inline';"
+        "font-src 'self' oss.maxcdn.com;"
+        )
+
 
 @view_config(route_name='home', renderer='templates/home.pt')
 def home(request):
