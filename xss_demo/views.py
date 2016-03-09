@@ -13,7 +13,7 @@ from .models import (
 @view_config(route_name='home', renderer='templates/home.pt')
 def home(request):
     posts = DB.get_all(Post)
-    return {'posts': posts}
+    return {'posts': sorted(posts, key=lambda post: post.date, reverse=True)}
 
 
 @view_config(route_name='post', renderer='templates/post.pt')
@@ -23,7 +23,11 @@ def post(request):
     comments = []
     for cid in post.comment_ids:
         comments.append(DB.get(Comment, cid))
-    return {'post': post, 'comments': comments}
+    return {
+        'post': post,
+        'comments': sorted(comments, key=lambda comment: comment.date,
+                           reverse=True)
+         }
 
 
 @view_config(route_name='add_comment')
