@@ -49,12 +49,12 @@ Running
 -------
 
 The application is a simple blog where the Administrator can publish new
-blogposts and anyone can add comments to the blogs. There is a search function
+blogposts and anyone can add comments to the posts. There is a search function
 that does nothing except show a XSS vulnerability.
 
-Several blogposts and comments are setup on application startup out of the box.
-The *database* (just in memory) is reset on every application start. The secret
-key used to sign the cookies is also reset on every application start.
+Several blogposts and comments are set up on application startup out of the
+box.  The *database* (just in memory) is reset on every application start. The
+secret key used to sign the cookies is also reset on every application start.
 
 ### Adding a comment
 
@@ -64,7 +64,10 @@ To add a comment simply click on any of the blogposts and use the form at the bo
 
 To add a blogpost you need to log in with user *Administrator* and password *top-secret* .
 
-Then click on the link in the menu and fill out the form.
+Then click on the **Add Post** link in the menu and fill out the form.
+
+Currently there is no visual feedback to tell you you are logged in. But you
+can check your Browsers Developer Console to see that a Cookie was set.
 
 ### Searching
 
@@ -94,7 +97,7 @@ expand it to included *Client XSS* examples and send me a pull request.
 Example of Reflected Server XSS
 -------------------------------
 
-The search functionality previously mentioned is an exampled of *Reflected
+The search functionality previously mentioned is an example of *Reflected
 Server XSS*.
 
 Reflected because the user data is simply reflected (returned) by the server and not stored. *Server XSS* because the flaw that allows for XSS to happen is on the server. The returned HTML contains code that is not properly encoded/escaped.
@@ -117,3 +120,79 @@ The big disadvantage of *Reflected XSS* (from the the attackers point of view)
 is that you need to get the link to your victim. This required extra effort
 (e.g. a phishing e-mail) and not as many users will be affected as with *Stored
 XSS*. Plus it is comparatively easy for the browser to detect and block.
+
+
+Example of Stored Server XSS
+----------------------------
+
+The blogpost comments are an example of *Stored Server XSS*. Stored because the
+comments are stored in the database of the application (even though in this
+case the database is volatile and is reset on application startup) and *Server*
+because the vulnerability is in Server-side code.
+
+Open one of the posts and add the following text as comment:
+
+```
+Great work!
+<script>
+alert(1)
+</script>
+```
+
+After saving the comment the blogpost will be reloaded and all comments
+(including yours) will be displayed. This means the JavaScript is run and an
+alert with content 1 should be displayed. Note that unlike the *Reflected XSS*
+example above the browser can do nothing to prevent the code from running. The
+Browser is not able to distinguish between legitimate code sent by the server
+and the code you just injected (because actually both are sent by the server!).
+
+In the *Reflected XSS* example the code is also sent by the server but since
+the browser has the data you just injected in the URL it is able to search for
+that data in the returned content and *guesses* that you are being attacked.
+
+Cookie stealing
+---------------
+
+TODO
+
+
+HttpOnly
+--------
+
+TODO
+
+
+CSP Content Security Policies
+-----------------------------
+
+TODO
+
+
+Links & Acknowledgements
+========================
+
+Videos
+------
+
+* [OWASP AppSecUSA 2012: Unraveling Some of the Mysteries around DOM-Based XSS (Dave Wichers)](https://www.youtube.com/watch?v=dMpuVnpfJMU)
+* [Advanced XSS - Robert Grosse - 2013-2-5](https://www.youtube.com/watch?v=E7SLMN_8mNk)
+* [Exploiting XSS: What Tesco doesn't understand about web security (but you probably should) (Troy Hunt)](https://www.youtube.com/watch?v=gZ1mM6OtXIc)
+* [Revisiting XSS Sanitization (Ashar Javed)](https://www.youtube.com/watch?v=LLtOJNeMp7c)
+* [Black Hat 2013 - The Web IS Vulnerable: XSS Defense on the BattleFront (Ryan Barnett & Greg Wroblewski)](https://www.youtube.com/watch?v=6QOiVoDm5IM)
+
+
+Reading
+-------
+
+* [XSS overview by OWASP (Open Web Application Security Project)](https://www.owasp.org/index.php/Cross-site_Scripting_(XSS))
+* [XSS (Cross Site Scripting) Prevention Cheat Sheet](https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet)
+* [DOM based XSS Prevention Cheat Sheet](https://www.owasp.org/index.php/DOM_based_XSS_Prevention_Cheat_Sheet)
+* [Types of Cross-Site Scripting](https://www.owasp.org/index.php/Types_of_Cross-Site_Scripting)
+
+
+Acknowledgements
+----------------
+
+* Template used for the example application by *Start Bootstrap*. [Blog Home](http://startbootstrap.com/template-overviews/blog-home/) and [Blog Post](http://startbootstrap.com/template-overviews/blog-post/)
+* [Pyramid Framework](http://www.pylonsproject.org/): A great Python Web-Framework you should try!
+* Python UserGroup Freiburg. [Visit us!](http://www.meetup.com/Python-User-Group-Freiburg/)
