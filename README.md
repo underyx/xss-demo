@@ -8,6 +8,23 @@ entries and were anyone can add comments) can be found in the app/
 subdirectory.
 
 
+Table of content
+================
+
+* [Setup](#setup)
+* [Running](#running)
+  * [Adding a comment](#adding-a-comment)
+  * [Logging in / Adding a post](#logging-in--adding-a-post)
+  * [Searching](#searching)
+* [XSS](#xss)
+  * [Example of Reflected Server XSS](#example-of-reflected-server-xss)
+  * [Example of Stored Server XSS](#example-of-stored-server-xss)
+  * [Cookie stealing](#cookie-stealing)
+  * [HttpOnly](#httponly)
+  * [CSP Content Security Policies](#csp-content-security-policies)
+* [Links & Acknowledgements](#links--acknowledgements)
+
+
 Setup
 -----
 
