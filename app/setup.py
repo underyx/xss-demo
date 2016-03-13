@@ -2,12 +2,6 @@ import os
 
 from setuptools import setup, find_packages
 
-here = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(here, 'README.md')) as f:
-    README = f.read()
-with open(os.path.join(here, 'CHANGES.md')) as f:
-    CHANGES = f.read()
-
 requires = [
     'pyramid',
     'pyramid_chameleon',
@@ -19,7 +13,7 @@ requires = [
 setup(name='xss-demo',
       version='0.0',
       description='xss-demo',
-      long_description=README + '\n\n' + CHANGES,
+      long_description='xss-demo',
       classifiers=[
         "Programming Language :: Python",
         "Framework :: Pyramid",
