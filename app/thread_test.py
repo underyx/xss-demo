@@ -9,9 +9,10 @@ from threading import (
     )
 import time
 import random
-
+import subprocess
 
 a = 0
+subprocess.call(f"echo {a}", shell=True)
 a_lock = Lock()
 
 def increaser():
