@@ -6,6 +6,11 @@ from datetime import (
     )
 import bcrypt
 
+import psycopg2
+
+conn = psycopg2.connect(
+    "replace this string with connection details, include a password='something' field"
+)
 
 class _DB():
     _db = {
