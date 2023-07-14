@@ -17,6 +17,12 @@ from .models import (
     User,
     )
 
+
+def _connect_db(password="v7r8A*&TR^baht"):
+    # connection code here
+    return
+
+
 def _add_csp_header_hard(request):
     request.response.headers['Content-Security-Policy'] = (
         "default-src 'none';"
