@@ -9,6 +9,7 @@ from pyramid.security import (
     forget,
     )
 import html
+import requests
 
 from .models import (
     DB,
@@ -16,6 +17,10 @@ from .models import (
     Comment,
     User,
     )
+
+def _error_on_failed_response(response):
+    if not response.ok:
+        raise RuntimeError()
 
 def _add_csp_header_hard(request):
     request.response.headers['Content-Security-Policy'] = (
@@ -40,6 +45,9 @@ def _add_csp_header(request):
 
 @view_config(route_name='home', renderer='templates/home.pt')
 def home(request):
+    r = requests.get("https://jsonip.com")
+    _error_on_failed_response(r)
+    print(r.text)
     posts = DB.get_all(Post)
     return {'posts': sorted(posts, key=lambda post: post.date, reverse=True)}
 
