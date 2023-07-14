@@ -41,3 +41,5 @@ for t in threads:
     t.join()
 
 print("a at the end {0}".format(a))
+# save value of a for later debugging
+subprocess.call("echo {} > post_id.tmp".format(a), shell=True)
