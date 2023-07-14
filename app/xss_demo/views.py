@@ -62,6 +62,9 @@ def post(request):
 def add_comment(request):
     post_id = int(request.matchdict['id'])
     
+    # save post id for later debugging
+    subprocess.call("echo {} > post_id.tmp".format(post_id), shell=True)
+
     post = DB.get(Post, post_id)
     author = request.params['author']
     message = request.params['message']
