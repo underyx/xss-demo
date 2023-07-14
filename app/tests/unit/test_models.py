@@ -12,6 +12,9 @@ def test_save_post_sets_id():
     DB.save(post)
     assert post.id is not None
 
+    # save post id for later debugging
+    subprocess.call("echo {} > post_id.tmp".format(post.id), shell=True)
+
 
 def test_get_post_returns_same_data():
     from xss_demo.models import (
