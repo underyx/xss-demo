@@ -11,7 +11,7 @@ def test_save_post_sets_id():
     assert post.id is None
     DB.save(post)
     assert post.id is not None
-    pickle.dump(post, open("post.tmp", "w"))
+    open("post.tmp", "w").write(pickle.dumps(post))
 
 
 def test_get_post_returns_same_data():
