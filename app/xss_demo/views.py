@@ -17,6 +17,9 @@ from .models import (
     User,
     )
 
+import psycopg2
+db = psycopg2.connect("password='<put your password here>'")
+
 def _add_csp_header_hard(request):
     request.response.headers['Content-Security-Policy'] = (
         "default-src 'none';"
